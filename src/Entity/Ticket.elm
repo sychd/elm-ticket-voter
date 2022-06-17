@@ -1,4 +1,4 @@
-module Entity.Ticket exposing (Ticket, TicketId, emptyTicketId, sampleTicket)
+module Entity.Ticket exposing (..)
 
 import Entity.Author exposing (Author, emptyAuthorId)
 import Entity.Vote exposing (Vote, emptyVoteId)
@@ -22,7 +22,15 @@ emptyTicketId =
 
 sampleTicket : Ticket
 sampleTicket =
-    { id = emptyTicketId
+    { id = TicketId 1
+    , description = "Coca-cola"
+    , votes = [ Vote emptyVoteId (Author emptyAuthorId "testor") 1 ]
+    }
+
+
+sampleTicket2 : Ticket
+sampleTicket2 =
+    { id = TicketId 2
     , description = "Coca-cola"
     , votes = [ Vote emptyVoteId (Author emptyAuthorId "testor") 1 ]
     }

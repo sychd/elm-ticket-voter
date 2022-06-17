@@ -1,4 +1,4 @@
-module Entity.Vote exposing (Vote, emptyVoteId)
+module Entity.Vote exposing (Vote, VoteId, emptyVoteId)
 
 import Entity.Author exposing (Author)
 

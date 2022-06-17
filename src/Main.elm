@@ -1,21 +1,63 @@
 module Main exposing (..)
 
 import Browser
-import Page.TicketBoard
+import Html exposing (Html, div, text)
+import Page.TicketBoard as TicketBoard
 
 
 type Msg
-    = TicketBoardMsg Page.TicketBoard.Msg
+    = TicketBoardMsg TicketBoard.Msg
+
+
+type Page
+    = NotFoundPage
+    | TicketBoardPage TicketBoard.Model
 
 
 type alias Model =
-    Page.TicketBoard.Model
+    { page : Page }
 
 
-main : Program () Model Page.TicketBoard.Msg
+initialModel : Model
+initialModel =
+    { page = TicketBoardPage TicketBoard.initialModel }
+
+
+currentView : Model -> Html Msg
+currentView model =
+    case model.page of
+        TicketBoardPage boardModel ->
+            TicketBoard.view boardModel
+                |> Html.map TicketBoardMsg
+
+        NotFoundPage ->
+            div [] [ text "Not found page" ]
+
+
+update : Msg -> Model -> Model
+update msg model =
+    case ( msg, model.page ) of
+        ( TicketBoardMsg subMsg, TicketBoardPage subModel ) ->
+            let
+                updatedModel =
+                    TicketBoard.update subMsg subModel
+            in
+            { model | page = TicketBoardPage updatedModel }
+
+        ( _, _ ) ->
+            model
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ currentView model ]
+
+
+main : Program () Model Msg
 main =
     Browser.sandbox
-        { init = Page.TicketBoard.initialModel
-        , view = Page.TicketBoard.view
-        , update = Page.TicketBoard.update
+        { init = initialModel
+        , view = view
+        , update = update
         }

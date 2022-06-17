@@ -1,22 +1,34 @@
-module Component.Ticket exposing (renderTicket)
+module Component.Ticket exposing (..)
 
-import Entity.Ticket exposing (Ticket)
-import Entity.Vote exposing (Vote)
+import Entity.Ticket exposing (Ticket, TicketId)
+import Entity.Vote exposing (Vote, VoteId)
 import Html exposing (..)
+import Html.Events exposing (onClick)
 
-renderTicket : Ticket -> Html msg
+
+renderTicket : Ticket -> Html TicketMsg
 renderTicket ticket =
     div []
         [ span []
             [ text ticket.description ]
+        , button [ onClick <| DescriptionChanged ticket.id "Kebab" ] [ text "Change description" ]
         , div []
-            (List.map renderVote ticket.votes)
+            (List.map (renderVote ticket) ticket.votes)
         ]
 
 
-renderVote : Vote -> Html msg
-renderVote vote =
+type TicketMsg
+    = VoteChanged TicketId VoteId Float
+    | DescriptionChanged TicketId String
+
+
+renderVote : Ticket -> Vote -> Html TicketMsg
+renderVote ticket vote =
     div []
         [ span []
-            [ text <| String.fromFloat vote.value ]
+            [ text "[ "
+            , text <| String.fromFloat vote.value
+            , text " ]"
+            ]
+        , button [ onClick <| VoteChanged ticket.id vote.id 1 ] [ text "+1" ]
         ]
