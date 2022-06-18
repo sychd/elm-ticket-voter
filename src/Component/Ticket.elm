@@ -5,6 +5,7 @@ import Entity.Vote exposing (Vote, VoteId)
 import Html exposing (..)
 import Html.Attributes exposing (type_, value)
 import Html.Events exposing (onClick, onInput)
+import Utils exposing (renderIf, updateMatchingBy)
 
 
 type alias State =
@@ -26,7 +27,7 @@ type Status
 
 
 type Msg
-    = ChangeVote Ticket Float
+    = ChangeVote Vote Float
     | UpdateDraftDescription String
     | ChangeDraftStatus Status
 
@@ -67,6 +68,19 @@ update msg state =
         ChangeDraftStatus (Inactive Rejected) ->
             { state | status = Inactive Idle }
 
+        ChangeVote vote value ->
+            let
+                newVote =
+                    { vote | value = vote.value + value }
+
+                updateVote new old =
+                    updateMatchingBy (\a b -> a.id == b.id) new old
+
+                updatedTicket =
+                    { ticket | votes = List.map (updateVote newVote) ticket.votes }
+            in
+            { state | value = updatedTicket }
+
         _ ->
             state
 
@@ -82,7 +96,7 @@ view toMsg state =
             [ text ticket.description ]
         , renderDraftControl toMsg state
         , div []
-            (List.map (renderVote toMsg state ticket) ticket.votes)
+            (List.map (renderVote toMsg state) ticket.votes)
         ]
 
 
@@ -105,13 +119,14 @@ renderDraftControl toMsg state =
             button [ onClick <| toMsg (update (ChangeDraftStatus Active) state) ] [ text "Change description" ]
 
 
-renderVote : (State -> msg) -> State -> Ticket -> Vote -> Html msg
-renderVote toMsg state ticket vote =
+renderVote : (State -> msg) -> State -> Vote -> Html msg
+renderVote toMsg state vote =
     div []
         [ span []
             [ text "[ "
             , text <| String.fromFloat vote.value
             , text " ]"
             ]
-        , button [ onClick <| toMsg (update (ChangeVote ticket 1) state) ] [ text "+1" ]
+        , button [ onClick <| toMsg (update (ChangeVote vote 1) state) ] [ text "+1" ]
+        , renderIf (vote.value > 0) <| button [ onClick <| toMsg (update (ChangeVote vote -1) state) ] [ text "-1" ]
         ]
