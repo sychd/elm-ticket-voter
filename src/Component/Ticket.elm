@@ -3,7 +3,7 @@ module Component.Ticket exposing (..)
 import Entity.Ticket exposing (Ticket, TicketId, emptyTicket)
 import Entity.Vote exposing (Vote, VoteId)
 import Html exposing (..)
-import Html.Attributes exposing (type_, value)
+import Html.Attributes exposing (class, classList, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Utils exposing (renderIf, updateMatchingBy)
 
@@ -91,7 +91,7 @@ view toMsg state =
         ticket =
             state.value
     in
-    div []
+    div [ class "bg-gray-200" ]
         [ span []
             [ text ticket.description ]
         , renderDraftControl toMsg state
