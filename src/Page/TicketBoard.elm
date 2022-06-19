@@ -3,6 +3,7 @@ module Page.TicketBoard exposing (..)
 import Component.Ticket as TicketC
 import Entity.Ticket exposing (Ticket, TicketId, sampleTicket, sampleTicket2)
 import Html exposing (..)
+import Html.Attributes exposing (class)
 import Utils exposing (updateMatchingBy)
 
 
@@ -19,9 +20,9 @@ initialModel =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ h1 [] [ text "Tickets board" ]
-        , div []
+    div [ class "m-4" ]
+        [ h1 [ class "font-bold text-xl text-center m-2" ] [ text "Tickets board" ]
+        , div [ class "flex" ]
             (List.map (TicketC.view TicketChanged) model.tickets)
         ]
 

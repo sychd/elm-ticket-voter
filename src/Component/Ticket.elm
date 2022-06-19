@@ -91,8 +91,8 @@ view toMsg state =
         ticket =
             state.value
     in
-    div [ class "bg-gray-200" ]
-        [ span []
+    div [ class "bg-gray-200 flex flex-col w-200 m-2 p-2 rounded-md gap-y-2 justify-around" ]
+        [ span [ class "text-lg font-bold" ]
             [ text ticket.description ]
         , renderDraftControl toMsg state
         , div []
@@ -104,29 +104,32 @@ renderDraftControl : (State -> msg) -> State -> Html msg
 renderDraftControl toMsg state =
     case state.status of
         Active ->
-            div []
+            div [ class "flex gap-x-2" ]
                 [ input
                     [ type_ "text"
                     , onInput (\v -> toMsg <| update (UpdateDraftDescription v) state)
                     , value state.draftDescription
                     ]
                     []
-                , button [ onClick <| toMsg <| update (ChangeDraftStatus <| Inactive Rejected) state ] [ text "Cancel" ]
-                , button [ onClick <| toMsg <| update (ChangeDraftStatus <| Inactive Confirmed) state ] [ text "OK" ]
+                , button [ class "btn btn-red", onClick <| toMsg <| update (ChangeDraftStatus <| Inactive Rejected) state ] [ text "Cancel" ]
+                , button [ class "btn btn-blue", onClick <| toMsg <| update (ChangeDraftStatus <| Inactive Confirmed) state ] [ text "OK" ]
                 ]
 
         Inactive _ ->
-            button [ onClick <| toMsg (update (ChangeDraftStatus Active) state) ] [ text "Change description" ]
+            button [ class "btn btn-blue my-4", onClick <| toMsg (update (ChangeDraftStatus Active) state) ] [ text "Change value" ]
 
 
 renderVote : (State -> msg) -> State -> Vote -> Html msg
 renderVote toMsg state vote =
-    div []
-        [ span []
-            [ text "[ "
-            , text <| String.fromFloat vote.value
-            , text " ]"
+    div [ class "flex gap-x-2 align-center justify-around" ]
+        [ button [ class "btn btn-blue", onClick <| toMsg (update (ChangeVote vote 1) state) ] [ text "+1" ]
+        , span [ class "bg-gray-300 py-1 px-3 flex align-center rounded-full color-gray-800" ]
+            [ text <| String.fromFloat vote.value
             ]
-        , button [ onClick <| toMsg (update (ChangeVote vote 1) state) ] [ text "+1" ]
-        , renderIf (vote.value > 0) <| button [ onClick <| toMsg (update (ChangeVote vote -1) state) ] [ text "-1" ]
+        , renderIf (vote.value > 0) <|
+            button
+                [ class "btn btn-blue"
+                , onClick <| toMsg (update (ChangeVote vote -1) state)
+                ]
+                [ text "-1" ]
         ]
