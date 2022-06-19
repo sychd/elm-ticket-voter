@@ -1,7 +1,7 @@
 module Entity.Ticket exposing (..)
 
 import Entity.Author exposing (Author, emptyAuthorId)
-import Entity.Vote exposing (Vote, emptyVoteId)
+import Entity.Vote exposing (Vote, emptyVote, emptyVoteId)
 
 
 type TicketId
@@ -24,7 +24,7 @@ emptyTicket : Ticket
 emptyTicket =
     { id = emptyTicketId
     , description = ""
-    , votes = []
+    , votes = [ emptyVote ]
     }
 
 

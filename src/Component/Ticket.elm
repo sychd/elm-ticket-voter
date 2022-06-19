@@ -85,8 +85,8 @@ update msg state =
             state
 
 
-view : (State -> msg) -> State -> Html msg
-view toMsg state =
+view : msg -> (State -> msg) -> State -> Html msg
+view onRemoveMsg toMsg state =
     let
         ticket =
             state.value
@@ -97,6 +97,7 @@ view toMsg state =
         , renderDraftControl toMsg state
         , div []
             (List.map (renderVote toMsg state) ticket.votes)
+        , button [ class "btn btn-red", onClick onRemoveMsg ] [ text "Remove" ]
         ]
 
 
