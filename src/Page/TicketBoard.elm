@@ -4,7 +4,7 @@ import Entity.Ticket exposing (Ticket, TicketId, emptyTicket, sampleTicket, samp
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Page.Components.NewTicketForm as NewTicketFormComponent exposing (openNewTicketForm)
+import Page.Components.NewTicketForm as NewTicketFormComponent
 import Page.Components.Ticket as TicketComponent
 import Utils exposing (FormState(..), updateMatchingBy)
 
@@ -64,7 +64,7 @@ update msg model =
                     { model | newTicketForm = form }
 
         OpenNewTicketForm ->
-            { model | newTicketForm = openNewTicketForm model.newTicketForm }
+            { model | newTicketForm = NewTicketFormComponent.initialOpenedState }
 
         RemoveTicket ticket ->
             { model | tickets = List.filter (\t -> t.value.id /= ticket.value.id) model.tickets }

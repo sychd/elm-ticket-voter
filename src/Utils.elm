@@ -7,7 +7,7 @@ type FormState
     = Opened
     | Submitted
     | Rejected
-    | Idle
+    | Closed
 
 
 updateMatchingBy : (a -> a -> Bool) -> a -> a -> a

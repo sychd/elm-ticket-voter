@@ -25,7 +25,7 @@ initialState : State
 initialState =
     { value = emptyTicket
     , draftDescription = ""
-    , status = Idle
+    , status = Closed
     }
 
 
@@ -52,10 +52,10 @@ update msg state =
                 updatedTicket =
                     { ticket | description = state.draftDescription }
             in
-            { state | status = Idle, value = updatedTicket }
+            { state | status = Closed, value = updatedTicket }
 
         ChangeDraftStatus Rejected ->
-            { state | status = Idle }
+            { state | status = Closed }
 
         ChangeVote vote value ->
             let
@@ -101,7 +101,7 @@ renderDraftControl toMsg state =
             div [ class "flex gap-x-2" ]
                 [ input
                     [ type_ "text"
-                    , onInput (\v -> toMsg <| update (UpdateDraftDescription v) state)
+                    , onInput (\v -> handle (UpdateDraftDescription v))
                     , value state.draftDescription
                     ]
                     []

@@ -1,4 +1,4 @@
-module Entity.Author exposing (Author, emptyAuthorId)
+module Entity.Author exposing (Author, AuthorId, emptyAuthorId)
 
 
 type AuthorId
