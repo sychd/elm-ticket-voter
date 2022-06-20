@@ -1,42 +1,31 @@
-module Component.Ticket exposing (..)
+module Page.Components.Ticket exposing (..)
 
 import Entity.Ticket exposing (Ticket, TicketId, emptyTicket)
 import Entity.Vote exposing (Vote, VoteId)
 import Html exposing (..)
-import Html.Attributes exposing (class, classList, type_, value)
+import Html.Attributes exposing (class, type_, value)
 import Html.Events exposing (onClick, onInput)
-import Utils exposing (renderIf, updateMatchingBy)
+import Utils exposing (FormState(..), renderIf, updateMatchingBy)
 
 
 type alias State =
     { value : Ticket
     , draftDescription : String
-    , status : Status
+    , status : FormState
     }
-
-
-type InactiveStatus
-    = Confirmed
-    | Rejected
-    | Idle
-
-
-type Status
-    = Active
-    | Inactive InactiveStatus
 
 
 type Msg
     = ChangeVote Vote Float
     | UpdateDraftDescription String
-    | ChangeDraftStatus Status
+    | ChangeDraftStatus FormState
 
 
 initialState : State
 initialState =
     { value = emptyTicket
     , draftDescription = ""
-    , status = Inactive Idle
+    , status = Idle
     }
 
 
@@ -55,18 +44,18 @@ update msg state =
         UpdateDraftDescription value ->
             { state | draftDescription = value }
 
-        ChangeDraftStatus Active ->
-            { state | status = Active, draftDescription = state.value.description }
+        ChangeDraftStatus Opened ->
+            { state | status = Opened, draftDescription = state.value.description }
 
-        ChangeDraftStatus (Inactive Confirmed) ->
+        ChangeDraftStatus Submitted ->
             let
                 updatedTicket =
                     { ticket | description = state.draftDescription }
             in
-            { state | status = Inactive Idle, value = updatedTicket }
+            { state | status = Idle, value = updatedTicket }
 
-        ChangeDraftStatus (Inactive Rejected) ->
-            { state | status = Inactive Idle }
+        ChangeDraftStatus Rejected ->
+            { state | status = Idle }
 
         ChangeVote vote value ->
             let
@@ -103,8 +92,12 @@ view onRemoveMsg toMsg state =
 
 renderDraftControl : (State -> msg) -> State -> Html msg
 renderDraftControl toMsg state =
+    let
+        handle msg =
+            toMsg <| update msg state
+    in
     case state.status of
-        Active ->
+        Opened ->
             div [ class "flex gap-x-2" ]
                 [ input
                     [ type_ "text"
@@ -112,12 +105,12 @@ renderDraftControl toMsg state =
                     , value state.draftDescription
                     ]
                     []
-                , button [ class "btn btn-red", onClick <| toMsg <| update (ChangeDraftStatus <| Inactive Rejected) state ] [ text "Cancel" ]
-                , button [ class "btn btn-blue", onClick <| toMsg <| update (ChangeDraftStatus <| Inactive Confirmed) state ] [ text "OK" ]
+                , button [ class "btn btn-red", onClick <| handle (ChangeDraftStatus <| Rejected) ] [ text "Cancel" ]
+                , button [ class "btn btn-blue", onClick <| handle (ChangeDraftStatus <| Submitted) ] [ text "OK" ]
                 ]
 
-        Inactive _ ->
-            button [ class "btn btn-blue my-4", onClick <| toMsg (update (ChangeDraftStatus Active) state) ] [ text "Change value" ]
+        _ ->
+            button [ class "btn btn-blue my-4", onClick <| handle (ChangeDraftStatus Opened) ] [ text "Change value" ]
 
 
 renderVote : (State -> msg) -> State -> Vote -> Html msg

@@ -3,6 +3,13 @@ module Utils exposing (..)
 import Html exposing (Html, text)
 
 
+type FormState
+    = Opened
+    | Submitted
+    | Rejected
+    | Idle
+
+
 updateMatchingBy : (a -> a -> Bool) -> a -> a -> a
 updateMatchingBy matcher new old =
     if matcher new old then

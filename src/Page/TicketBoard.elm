@@ -1,57 +1,50 @@
 module Page.TicketBoard exposing (..)
 
-import Component.Ticket as TicketC
 import Entity.Ticket exposing (Ticket, TicketId, emptyTicket, sampleTicket, sampleTicket2)
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
-import Utils exposing (updateMatchingBy)
+import Page.Components.NewTicketForm as NewTicketFormComponent exposing (openNewTicketForm)
+import Page.Components.Ticket as TicketComponent
+import Utils exposing (FormState(..), updateMatchingBy)
 
 
 type alias Model =
-    { tickets : List TicketC.State
-    , formState : FormState
+    { tickets : List TicketComponent.State
+    , newTicketForm : NewTicketFormComponent.State
     }
 
 
-type FormState
-    = Opened
-    | Submitted Ticket
-    | Rejected
-    | Idle
-
-
 type Msg
-    = TicketChanged TicketC.State
-    | NewTicket FormState
-    | RemoveTicket TicketC.State
+    = TicketChanged TicketComponent.State
+    | OpenNewTicketForm
+    | NewTicketFormChanged NewTicketFormComponent.State
+    | AddTicket NewTicketFormComponent.State
+    | RemoveTicket TicketComponent.State
 
 
 initialModel : Model
 initialModel =
-    { tickets = List.map TicketC.withTicket [ sampleTicket, sampleTicket2 ]
-    , formState = Idle
+    { tickets = List.map TicketComponent.withTicket [ sampleTicket, sampleTicket2 ]
+    , newTicketForm = NewTicketFormComponent.initialState
     }
 
 
 view : Model -> Html Msg
 view model =
-    case model.formState of
+    case model.newTicketForm.state of
         Opened ->
             div [ class "m-4 flex flex-col w-[300px] gap-y-3" ]
-                [ h1 [ class "font-bold text-xl text-center m-2" ] [ text "New Ticket form" ]
-                , text "Form with validation to be done"
-                , button [ class "btn btn-blue", onClick <| NewTicket (Submitted emptyTicket) ] [ text " New ticket" ]
-                , button [ class "btn btn-red", onClick <| NewTicket Rejected ] [ text " Cancel" ]
+                [ NewTicketFormComponent.view NewTicketFormChanged model.newTicketForm
                 ]
 
         _ ->
             div [ class "m-4" ]
                 [ h1 [ class "font-bold text-xl text-center m-2" ] [ text "Tickets board" ]
                 , div [ class "flex" ]
-                    (List.map (\t -> TicketC.view (RemoveTicket t) TicketChanged t) model.tickets)
+                    (List.map (\t -> TicketComponent.view (RemoveTicket t) TicketChanged t) model.tickets)
                 , div []
-                    [ button [ class "btn btn-blue", onClick <| NewTicket Opened ] [ text " [+] New Ticket" ]
+                    [ button [ class "btn btn-blue", onClick OpenNewTicketForm ] [ text " [+] New Ticket" ]
                     ]
                 ]
 
@@ -62,24 +55,24 @@ update msg model =
         TicketChanged selectedTicketState ->
             { model | tickets = List.map (updateTicket selectedTicketState) model.tickets }
 
-        NewTicket formState ->
-            case formState of
-                Opened ->
-                    { model | formState = Opened }
+        NewTicketFormChanged form ->
+            case form.state of
+                Submitted ->
+                    { model | newTicketForm = form, tickets = model.tickets ++ [ TicketComponent.withTicket form.value ] }
 
-                Submitted ticket ->
-                    { model | tickets = model.tickets ++ [ TicketC.withTicket ticket ], formState = Idle }
+                _ ->
+                    { model | newTicketForm = form }
 
-                Rejected ->
-                    { model | formState = Idle }
-
-                Idle ->
-                    model
+        OpenNewTicketForm ->
+            { model | newTicketForm = openNewTicketForm model.newTicketForm }
 
         RemoveTicket ticket ->
             { model | tickets = List.filter (\t -> t.value.id /= ticket.value.id) model.tickets }
 
+        AddTicket form ->
+            { model | tickets = model.tickets ++ [ TicketComponent.withTicket form.value ] }
 
-updateTicket : TicketC.State -> TicketC.State -> TicketC.State
+
+updateTicket : TicketComponent.State -> TicketComponent.State -> TicketComponent.State
 updateTicket newTicket oldTicket =
     updateMatchingBy (\a b -> a.value.id == b.value.id) newTicket oldTicket
