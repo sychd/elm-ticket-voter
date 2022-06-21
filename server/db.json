@@ -1,0 +1,49 @@
+{
+  "tickets": [
+    {
+      "id": 1,
+      "description": "Coca-cola Light",
+      "author": {
+        "id": 1,
+        "nickname": "marko"
+      },
+      "votes": [
+        {
+          "id": 1,
+          "value": 2,
+          "author": {
+            "id": 1,
+            "nickname": "marko"
+          }
+        },
+        {
+          "id": 2,
+          "value": 3,
+          "author": {
+            "id": 2,
+            "nickname": "polo"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "description": "Pringles Paprika",
+      "author": {
+        "id": 2,
+        "nickname": "polo"
+      },
+      "votes": []
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "nickname": "marko"
+    },
+    {
+      "id": 2,
+      "nickname": "polo"
+    }
+  ]
+}

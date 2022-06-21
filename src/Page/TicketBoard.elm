@@ -1,6 +1,6 @@
 module Page.TicketBoard exposing (..)
 
-import Entity.Ticket exposing (Ticket, TicketId, emptyTicket, sampleTicket, sampleTicket2)
+import Entity.Ticket exposing (Ticket, TicketId, sampleTicket, sampleTicket2)
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
@@ -19,7 +19,6 @@ type Msg
     = TicketChanged TicketComponent.State
     | OpenNewTicketForm
     | NewTicketFormChanged NewTicketFormComponent.State
-    | AddTicket NewTicketFormComponent.State
     | RemoveTicket TicketComponent.State
 
 
@@ -68,9 +67,6 @@ update msg model =
 
         RemoveTicket ticket ->
             { model | tickets = List.filter (\t -> t.value.id /= ticket.value.id) model.tickets }
-
-        AddTicket form ->
-            { model | tickets = model.tickets ++ [ TicketComponent.withTicket form.value ] }
 
 
 updateTicket : TicketComponent.State -> TicketComponent.State -> TicketComponent.State

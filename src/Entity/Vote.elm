@@ -1,6 +1,6 @@
 module Entity.Vote exposing (Vote, VoteId, emptyVote, emptyVoteId)
 
-import Entity.Author exposing (Author, emptyAuthorId)
+import Entity.User exposing (User, emptyUserId)
 
 
 type VoteId
@@ -9,7 +9,7 @@ type VoteId
 
 type alias Vote =
     { id : VoteId
-    , author : Author
+    , author : User
     , value : Float
     }
 
@@ -22,6 +22,6 @@ emptyVoteId =
 emptyVote : Vote
 emptyVote =
     { id = VoteId -1
-    , author = Author emptyAuthorId "test"
+    , author = User emptyUserId "test"
     , value = 0
     }

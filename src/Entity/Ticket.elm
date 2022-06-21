@@ -1,6 +1,6 @@
 module Entity.Ticket exposing (..)
 
-import Entity.Author exposing (Author, AuthorId, emptyAuthorId)
+import Entity.User exposing (User, UserId, emptyUser, emptyUserId)
 import Entity.Vote exposing (Vote, emptyVote, emptyVoteId)
 
 
@@ -10,7 +10,7 @@ type TicketId
 
 type alias Ticket =
     { id : TicketId
-    , authorId : AuthorId
+    , author : User
     , description : String
     , votes : List Vote
     }
@@ -25,7 +25,7 @@ emptyTicket : Ticket
 emptyTicket =
     { id = emptyTicketId
     , description = ""
-    , authorId = emptyAuthorId
+    , author = emptyUser
     , votes = [ emptyVote ]
     }
 
@@ -34,8 +34,8 @@ sampleTicket : Ticket
 sampleTicket =
     { id = TicketId 1
     , description = "Coca-cola"
-    , authorId = emptyAuthorId
-    , votes = [ Vote emptyVoteId (Author emptyAuthorId "testor") 1 ]
+    , author = emptyUser
+    , votes = [ Vote emptyVoteId (User emptyUserId "testor") 1 ]
     }
 
 
@@ -43,6 +43,6 @@ sampleTicket2 : Ticket
 sampleTicket2 =
     { id = TicketId 2
     , description = "Coca-cola"
-    , authorId = emptyAuthorId
-    , votes = [ Vote emptyVoteId (Author emptyAuthorId "testor") 3 ]
+    , author = emptyUser
+    , votes = [ Vote emptyVoteId (User emptyUserId "testor") 3 ]
     }
