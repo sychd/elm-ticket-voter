@@ -1,7 +1,9 @@
 module Entity.Ticket exposing (..)
 
-import Entity.User exposing (User, UserId, emptyUser, emptyUserId)
-import Entity.Vote exposing (Vote, emptyVote, emptyVoteId)
+import Entity.User exposing (User, UserId, emptyUser, emptyUserId, userDecoder)
+import Entity.Vote exposing (Vote, emptyVote, emptyVoteId, votesDecoder)
+import Json.Decode as Decode exposing (Decoder, int, list, string)
+import Json.Decode.Pipeline exposing (required)
 
 
 type TicketId
@@ -46,3 +48,22 @@ sampleTicket2 =
     , author = emptyUser
     , votes = [ Vote emptyVoteId (User emptyUserId "testor") 3 ]
     }
+
+
+ticketsDecoder : Decoder (List Ticket)
+ticketsDecoder =
+    list ticketDecoder
+
+
+ticketDecoder : Decoder Ticket
+ticketDecoder =
+    Decode.succeed Ticket
+        |> required "id" ticketIdDecoder
+        |> required "user" userDecoder
+        |> required "description" string
+        |> required "votes" votesDecoder
+
+
+ticketIdDecoder : Decoder TicketId
+ticketIdDecoder =
+    Decode.map TicketId int

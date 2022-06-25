@@ -18,9 +18,13 @@ type alias Model =
     { page : Page }
 
 
-initialModel : Model
+initialModel : ( Model, Cmd Msg )
 initialModel =
-    { page = TicketBoardPage TicketBoard.initialModel }
+    let
+        ( ticketModel, ticketCmds ) =
+            TicketBoard.initialModel
+    in
+    ( { page = TicketBoardPage ticketModel }, Cmd.map TicketBoardMsg ticketCmds )
 
 
 currentView : Model -> Html Msg
@@ -34,18 +38,18 @@ currentView model =
             div [] [ text "Not found page" ]
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model.page ) of
         ( TicketBoardMsg subMsg, TicketBoardPage subModel ) ->
             let
-                updatedModel =
+                ( updatedModel, updatedCmd ) =
                     TicketBoard.update subMsg subModel
             in
-            { model | page = TicketBoardPage updatedModel }
+            ( { model | page = TicketBoardPage updatedModel }, Cmd.map TicketBoardMsg updatedCmd )
 
         ( _, _ ) ->
-            model
+            ( model, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -56,8 +60,9 @@ view model =
 
 main : Program () Model Msg
 main =
-    Browser.sandbox
-        { init = initialModel
+    Browser.element
+        { init = \_ -> initialModel
         , view = view
         , update = update
+        , subscriptions = \_ -> Sub.none
         }

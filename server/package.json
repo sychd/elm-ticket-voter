@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "json-server --watch db.json -p 5019 --cors",
+    "start": "json-server --watch db.json -p 5050 --cors --delay 500",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

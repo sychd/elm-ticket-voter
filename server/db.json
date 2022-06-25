@@ -3,7 +3,7 @@
     {
       "id": 1,
       "description": "Coca-cola Light",
-      "author": {
+      "user": {
         "id": 1,
         "nickname": "marko"
       },
@@ -29,11 +29,20 @@
     {
       "id": 2,
       "description": "Pringles Paprika",
-      "author": {
+      "user": {
         "id": 2,
         "nickname": "polo"
       },
-      "votes": []
+      "votes": [
+        {
+          "id": 1,
+          "value": 2,
+          "author": {
+            "id": 1,
+            "nickname": "marko"
+          }
+        }
+      ]
     }
   ],
   "users": [
